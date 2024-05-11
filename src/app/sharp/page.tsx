@@ -1,6 +1,6 @@
 "use client";
 import { Breadcrumb, Button, Flex, Layout, Menu, theme } from "antd";
-import LayoutInner from "../layoutInner";
+import LayoutInner from "../[locale]/layoutInner";
 import {
   DownloadOutlined,
   DownOutlined,

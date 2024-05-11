@@ -5,10 +5,37 @@ import Link from 'next/link';
 
 const { Header, Content, Footer } = Layout;
 
-const items = new Array(15).fill(null).map((_, index) => ({
-    key: index + 1,
-    label: `nav ${index + 1}`,
-}));
+const items =  [
+    {
+        key: '1',
+        label: (
+            <Link href="/">
+                Home 
+            </Link>
+        )
+        
+    },
+    {
+        key: '2',
+        label: (
+            <Link href="/sharp">
+               Option1 
+            </Link>
+        )
+         
+    },
+    {
+        key: '3',
+        label: (
+            <Link href="/form">
+                  Option2 
+            </Link>
+        )
+         
+       
+    },
+];
+ 
 
 export default function LayoutInner({children}:  {
     children :  React.ReactNode
