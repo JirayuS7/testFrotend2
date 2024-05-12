@@ -14,59 +14,43 @@ export interface DataType {
 }
 export default function FormPage() {
   const [data, setData] = useState<DataType[]>([]);
+  const [dataTable, setDataTable] = useState([]);
 
-  useEffect(() => {
-    const dataSample = [];
-    for (let i = 0; i < 2; i++) {
-      dataSample.push({
-        key: i,
-        name: `Edward King ${i}`,
-        gender: i % 2 === 0 ? `Male` : `Female`,
-        phone: `1234567890`,
-        nationality: `USA`,
-        action: i,
-      });
+  const localeData = () => {
+    const datas = localStorage.getItem("employee");
+
+    if (datas) {
+      try {
+        return JSON.parse(datas);
+      } catch (error) {
+        console.log(error);
+        return null;
+      }
     }
-    setData(dataSample.reverse());
-  }, []);
+  };
 
-  const localeData = () =>  {
-    try {
-      return localStorage.getItem("employee");
-    } catch (error) {
-      console.log(error);
-      return null;
-    }
-
-  }
-    
   const localeDataTable = localeData();
+ 
+
   useEffect(() => {
     try {
       if (localeDataTable) {
-        setData(JSON.parse(localeDataTable));
+        setData(localeDataTable);
       }
     } catch (error) {
       console.log(error);
     }
-  }, [localeDataTable]);
-
- 
-
- 
+  }, []);
 
   function removeItem(key: React.Key) {
-    const newData = data.filter((item) => item.key !== key) ;
+    const newData = data.filter((item) => item.key !== key);
 
     try {
       localStorage.setItem("employee", JSON.stringify(newData));
       setData(newData);
     } catch (error) {
-
-        alert("Error Removing Employee");
-     }
-
-  
+      alert("Error Removing Employee");
+    }
   }
 
   return (
@@ -74,13 +58,26 @@ export default function FormPage() {
       <div className="row">
         <div className="col-md-6">
           {" "}
-          <FormAntd data={data} setData={setData} />
+          <FormAntd
+            localData={localeDataTable}
+            dataTable={dataTable}
+            setDataTable={setDataTable}
+            data={data}
+            setData={setData}
+          />
         </div>
 
         <div className="col-md-6">
-          <strong>All Employees ({data.length})</strong>
+          <strong>All Employees ({dataTable.length})</strong>
 
-          <TableAntD data={data} removeItem={removeItem} />
+          <TableAntD
+            dataLocal={localeDataTable}
+            removeItem={removeItem}
+            dataTable={dataTable}
+            setDataTable={setDataTable}
+            data={data}
+           
+          />
         </div>
       </div>
     </LayoutInner>

@@ -17,36 +17,53 @@ import { DataType } from "../form/page";
 import { useTranslations } from "next-intl";
 
 export default function FormAntd({
+   
+  localData,
+  dataTable,
   data,
-  setData,
+  setData ,
+  setDataTable,
 }: {
-  data: DataType[];
-  setData: (data: DataType[]) => void;
+  data : DataType[],
+  setData : React.Dispatch<React.SetStateAction<DataType[]>>
+  localData:  DataType[],
+  dataTable:  DataType[],
+  setDataTable:   (value: any) => void;
 }) {
-    // const t = useTranslations('Form');
+  // const t = useTranslations('Form');
   const [form] = Form.useForm();
 
+
+
   const onFinish = (values: any) => {
-    const ConvertValue = {
-      key: values.idNumber,
-      name: values.firstName + ` ` + values.lastName,
-      gender: values.gender,
-      phone: values.phone,
-      nationality: values.nationality,
-      action: values.idNumber,
-    };
-    var getKey =   Math.random().toString(16).slice(2)
+    var getKey = Math.random().toString(16).slice(2)
+    // const ConvertValue = {
+    //   key: getKey,
+    //   name: values.firstName + ` ` + values.lastName,
+    //   gender: values.gender,
+    //   phone: values.phone,
+    //   nationality: values.nationality,
+    //   action: values.idNumber,
+    // };
+
     try {
-      setData([...data, { key: getKey, ...ConvertValue }] );
-      form.resetFields();
+      // setData([...data, { key: getKey, ...ConvertValue }] );
 
 
-      //  set Local Storage
-      try { 
-        localStorage.setItem("employee", JSON.stringify([...data, { key: getKey, ...ConvertValue }] ));
+      console.log(values)
+
+      try {
+        localStorage.setItem("employee", JSON.stringify([...localData, { key: getKey, ...values }]));
+        setDataTable([...dataTable, { key: getKey, name : 
+          values.firstName + ` ` + values.lastName
+          , ...values }]);
+
+        
+       
+        form.resetFields();
       } catch (error) {
         console.log(error);
-       } 
+      }
 
 
       alert("Employee Added Successfully");
@@ -56,7 +73,7 @@ export default function FormAntd({
       alert("Error");
     }
 
-  
+
 
 
   };
@@ -79,7 +96,7 @@ export default function FormAntd({
       form={form}
       onFinish={onFinish}
     >
-      <h3 className="mb-5"> 
+      <h3 className="mb-5">
         {/* {t('title')} */}
         Add Employee
       </h3>
@@ -214,13 +231,13 @@ export default function FormAntd({
           Submit
         </Button>
         <Button
- className="me-2"
+          className="me-2"
           onClick={() => {
             form.resetFields();
           }}
-        
+
         >Reset</Button>
-        
+
       </Form.Item>
     </Form>
   );
