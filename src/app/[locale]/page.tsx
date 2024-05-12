@@ -10,7 +10,7 @@ export default function Home() {
   const t = useTranslations('Index');
   const localActive = useLocale();
   return (
-
+    
     <LayoutInner>    <main  >
       <h1>  {t('title')}</h1>
 

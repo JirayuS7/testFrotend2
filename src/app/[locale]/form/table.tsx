@@ -5,6 +5,10 @@ import type { TableColumnsType } from "antd";
 import { DataType } from "./page";
 import { useRouter } from "next/navigation";
 import { t } from "i18next";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/lib/store";
+import { addPost } from '@/lib/features/formEditIdSlice';
+
 
 export default function TableAntD({
     dataLocal,
@@ -12,8 +16,7 @@ export default function TableAntD({
     dataTable,
     setDataTable,
     data,
-    Edit,
-    setEdit,
+   
 
 }: {
     data: DataType[];
@@ -21,9 +24,13 @@ export default function TableAntD({
     removeItem: (key: React.Key) => void;
     dataTable: any;
     setDataTable: any;
-    Edit: string;
-    setEdit: (value: string) => void;
+    
 }) {
+    const Edit  = useSelector((state: RootState) => state.form?.id);
+    const setEdit = useSelector((state: RootState) => state.form?.id);
+    const dispatch = useDispatch();
+
+    
     const [messageApi, contextHolder] = message.useMessage();
     const success = () => {
         messageApi.open({
@@ -51,6 +58,7 @@ export default function TableAntD({
             title: "Phone Number",
             dataIndex: "phone",
             key: "phone",
+            
         },
         {
             title: "Nationality",
@@ -66,7 +74,12 @@ export default function TableAntD({
                     <Button
                         className="me-2"
                         type="primary"
-                        onClick={() => setEdit(record.key as string)}
+                        onClick={() =>   dispatch(addPost(record.key))
+                            
+                            
+                            // setEdit(record.key as string)
+                        
+                        }
                     >
                         Edit
                     </Button>

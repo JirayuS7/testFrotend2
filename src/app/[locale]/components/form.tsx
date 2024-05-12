@@ -16,118 +16,108 @@ import {
 import { DataType, FormDataType } from "../form/page";
 import { useTranslations } from "next-intl";
 import dayjs from "dayjs";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/lib/store";
+import { addPost } from '@/lib/features/formEditIdSlice';
 
 export default function FormAntd({
-
   localData,
   dataTable,
   data,
   setData,
   setDataTable,
-  Edit,
-  setEdit,
+   
 }: {
-  data: DataType[],
-  setData: React.Dispatch<React.SetStateAction<DataType[]>>
-  localData: DataType[],
-  dataTable: DataType[],
+  data: DataType[];
+  setData: React.Dispatch<React.SetStateAction<DataType[]>>;
+  localData: DataType[];
+  dataTable: DataType[];
   setDataTable: (value: any) => void;
-  Edit: string;
-  setEdit: (value: string) => void;
+   
 }) {
+
+  // reduce
+  const Edit  = useSelector((state: RootState) => state.form?.id);
+  const dispatch = useDispatch();
+
   const [form] = Form.useForm();
   const isEdit = Edit !== "" ? true : false;
   const EiditID = Edit !== "" ? Edit : null;
 
   const onFinish = (values: any) => {
-    var getKey = Math.random().toString(16).slice(2)
-
+    var getKey = Math.random().toString(16).slice(2);
 
     try {
-
-
-
       try {
-        localStorage.setItem("employee", JSON.stringify([...localData, { key: getKey, ...values }]));
-        setDataTable([...dataTable, {
-          key: getKey, name:
-            values.firstName + ` ` + values.lastName
-          , ...values
-        }]);
-
-
+        localStorage.setItem(
+          "employee",
+          JSON.stringify([...localData, { key: getKey, ...values }])
+        );
+        setDataTable([
+          ...dataTable,
+          {
+            key: getKey,
+            name: values.firstName + ` ` + values.lastName,
+            ...values,
+          },
+        ]);
 
         form.resetFields();
       } catch (error) {
         console.log(error);
       }
 
-
       alert("Employee Added Successfully");
-
     } catch (error) {
       console.log(error);
       alert("Error");
     }
-
-
-
-
   };
 
-
-
   function EditData() {
-
     const data: any[] = localData.filter((item) => item.key === EiditID);
     const newData = localData.filter((item) => item.key !== EiditID);
 
     try {
-      localStorage.setItem("employee", JSON.stringify([...newData, { key: EiditID, ...form.getFieldsValue() }]));
+      localStorage.setItem(
+        "employee",
+        JSON.stringify([...newData, { key: EiditID, ...form.getFieldsValue() }])
+      );
 
-
-      setDataTable([...dataTable, {
-        key: EiditID, name:
-          form.getFieldsValue().firstName + ` ` + form.getFieldsValue().lastName
-        , ...form.getFieldsValue()
-      }]);
+      setDataTable([
+        ...dataTable,
+        {
+          key: EiditID,
+          name:
+            form.getFieldsValue().firstName +
+            ` ` +
+            form.getFieldsValue().lastName,
+          ...form.getFieldsValue(),
+        },
+      ]);
 
       form.resetFields();
-
     } catch (error) {
       console.log(error);
     }
 
-    setEdit("");
+ 
+    dispatch(addPost(""));
+    
     alert("Employee Updated Successfully");
   }
 
-
-  const formItemLayout = {
-    // labelCol: {
-    //   xs: { span: 24 },
-    //   sm: { span: 6 },
-    // },
-    // wrapperCol: {
-    //   xs: { span: 24 },
-    //   sm: { span: 14 },
-    // },
+  const formItemLayout = { 
   };
 
-
   useEffect(() => {
-
-
     if (isEdit && localData) {
       const data: any[] = localData.filter((item) => item.key === EiditID);
 
-      const ConvertDate = data && data[0].birthDate
-      const NewDate = dayjs(ConvertDate).format('DD-MM-YYYY')
-
-
+      const ConvertDate = data && data[0].birthDate;
+      const NewDate = dayjs(ConvertDate).format("DD-MM-YYYY");
 
       form.setFieldsValue({
-
         key: EiditID,
         gender: data && data[0].gender,
         firstName: data && data[0].firstName,
@@ -137,14 +127,10 @@ export default function FormAntd({
         idNumber: data && data[0].idNumber,
         passport: data && data[0].passport,
         phone: data && data[0].phone,
-        ExpectedSalary: data && data[0].ExpectedSalary
-
+        ExpectedSalary: data && data[0].ExpectedSalary,
       });
     }
-
-
   }, [Edit]);
-
 
   return (
     <Form
@@ -154,16 +140,17 @@ export default function FormAntd({
       form={form}
       onFinish={onFinish}
     >
-      {isEdit && <div>
-        <Button onClick={() => setEdit("")} className="mb-3">
-          {`< Back`} </Button>
-      </div>}
-
+      {isEdit && (
+        <div>
+          <Button onClick={() =>   dispatch(addPost(""))} className="mb-3">
+            {`< Back`}{" "}
+          </Button>
+        </div>
+      )}
 
       <h3 className="mb-5">
         {/* {t('title')} */}
-        {isEdit ? (
-          <>Edit : ({EiditID} )    </>) : "Add Employee"}
+        {isEdit ? <>Edit : ({EiditID} ) </> : "Add Employee"}
       </h3>
 
       <div className="row">
@@ -243,17 +230,7 @@ export default function FormAntd({
         </div>
       </div>
 
-      {/* <div className="row">
-        <div className="col-md-12">
-            <Form.Item
-                label="Phone Number"
-                name="phoneNumber"
-                rules={[{ required: true, message: "Please input!" }]}
-            >
-                <InputNumber style={{ width: "100%" }} />
-            </Form.Item>
-        </div>
-    </div> */}
+  
 
       <div className="row">
         <div className="col-md-12">
@@ -292,8 +269,6 @@ export default function FormAntd({
       </div>
 
       <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
-
-
         {isEdit ? (
           <Button
             type="primary"
@@ -309,17 +284,14 @@ export default function FormAntd({
           </Button>
         )}
 
-
-
-
         <Button
           className="me-2"
           onClick={() => {
             form.resetFields();
           }}
-
-        >Reset</Button>
-
+        >
+          Reset
+        </Button>
       </Form.Item>
     </Form>
   );

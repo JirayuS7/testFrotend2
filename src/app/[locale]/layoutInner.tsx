@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { usePathname } from 'next/navigation'
+import { Provider } from "react-redux";
+ 
 const { Header, Content, Footer } = Layout;
 
 
@@ -56,6 +58,7 @@ export default function LayoutInner({
     }
 
     return (
+     
         <Layout>
             <Header style={{ display: "flex", alignItems: "center" }}>
                 <h1 className="text-white h2 me-3">JIRAYU SRIPUD</h1>
@@ -111,5 +114,6 @@ export default function LayoutInner({
                 <a href="mail@jirayudesign@gmail.com">jirayudesign@gmail.com</a>
             </Footer>
         </Layout>
+        
     );
 }

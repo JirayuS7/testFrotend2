@@ -3,6 +3,9 @@ import { Inter } from "next/font/google";
 import "../globals.scss";
 import 'bootstrap/dist/css/bootstrap.min.css';
 const inter = Inter({ subsets: ["latin"] });
+import { Provider } from 'react-redux'
+import { store } from "../../lib/store";
+
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -24,7 +27,11 @@ export default function RootLayout({
   return (   
     <html lang={locale}>
       <body  >
-        {children}</body>
+     
+        {children}
+        
+        
+        </body>
     </html>
   );
 }

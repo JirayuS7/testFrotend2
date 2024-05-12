@@ -1,3 +1,4 @@
+import StoreProvider from "./StoreProvider";
 
 export default function RootLayout({
   children,
@@ -14,7 +15,8 @@ export default function RootLayout({
   return (
     <html lang={locale}>
       <body>
-        {children}
+        <StoreProvider> 
+        {children}</StoreProvider>
       </body>
     </html>
   )

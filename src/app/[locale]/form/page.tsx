@@ -4,6 +4,14 @@ import LayoutInner from "../layoutInner";
 import TableAntD from "./table";
 import { useEffect, useState } from "react";
 import { message } from "antd";
+import { useDispatch, useSelector } from "react-redux";
+
+import type { RootState } from '@/lib/store';
+ import { addPostTable  } from  '@/lib/features/dataTableSlice'
+// import { useSelector, useDispatch } from 'react-redux'
+// import { decrement, increment }  from '../../../lib/features/counter/counterSlice'
+
+
 export interface DataType {
   key: string | number;
   name: string;
@@ -31,7 +39,18 @@ export interface FormDataType {
 export default function FormPage() {
   const [data, setData] = useState<DataType[]>([]);
   const [dataTable, setDataTable] = useState([]);
-  const [Edit, setEdit] = useState<string | number>("");
+ 
+
+
+  // reduce
+ 
+  const count = useSelector((state: RootState) => state.counter.value);
+  const dataTableCenter  = useSelector((state: RootState) => state.dataTable);
+  console.log("🚀 ~ FormPage ~ dataTableCenter:", dataTableCenter)
+  const dispatch = useDispatch();
+ 
+ 
+
 
   const localeData = () => {
     const datas = localStorage.getItem("employee");
@@ -81,8 +100,7 @@ export default function FormPage() {
             setDataTable={setDataTable}
             data={data}
             setData={setData}
-            Edit = {Edit as string}
-            setEdit = {setEdit}
+           
           />
         </div>
 
@@ -95,11 +113,20 @@ export default function FormPage() {
             dataTable={dataTable}
             setDataTable={setDataTable}
             data={data}
-            Edit = {Edit as string}
-            setEdit = {setEdit}
+         
            
           />
         </div>
+      </div>
+
+      <div>
+        <button className="btn" onClick={() => dispatch(addPostTable(
+          {
+            key: 1,
+            name: 'John Doe',}
+
+        ))}>+</button>
+        {/* <button  className="btn"  onClick={() => dispatch(decrement())}>-</button> */}
       </div>
     </LayoutInner>
   );
