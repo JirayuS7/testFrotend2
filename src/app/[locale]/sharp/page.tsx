@@ -45,7 +45,9 @@ const sharpData = [
 ];
 
 export default function SharpPage() {
+
   const [sharps, setSharps] = useState(sharpData);
+
   const [positions, setPosition] = useState({
     row1: "justify-content-start",
     row2: "justify-content-end",
@@ -68,10 +70,19 @@ export default function SharpPage() {
     setSharps(newOrder);
   }
 
+
+  //  randoms 
+  const [sharpsActive, setSharpsActive] = useState(0);
   async function RanDom() {
-    const newOrder = sharps.sort(() => Math.random() - 0.5);
-    await setSharps(newOrder);
+    await setSharpsActive(sharpsActive + 1)
   }
+
+  useEffect(() => {
+    const newOrder = sharps.sort(() => Math.random() - 0.5);
+    setSharps(newOrder)
+  }, [sharpsActive]);
+  // end  randoms 
+
 
   function ChangePosition() {
     if (positions.row1 === "justify-content-start") {
@@ -195,22 +206,23 @@ export default function SharpPage() {
 
     return (
       <>
-        <div className={"row " + positions.row1}>
-          <SharpList1 />
-        </div>
+        <div className="bg-gradient-sharp">
+          <div className={"row " + positions.row1}>
+            <SharpList1 />
+          </div>
 
-        <div className={"row  " + positions.row2}>
-          <SharpList2 />
-        </div>
+          <div className={"row  " + positions.row2}>
+            <SharpList2 />
+          </div></div>
       </>
     );
   };
 
   return (
-      <LayoutInner>
-        <Control />
-        <hr />
-        <SharpCard />
-      </LayoutInner>
+    <LayoutInner>
+      <Control />
+      <hr />
+      <SharpCard />
+    </LayoutInner>
   );
 }

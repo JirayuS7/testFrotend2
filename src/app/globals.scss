@@ -24,6 +24,12 @@ a {
  
 
 //  page sharp
+.bg-gradient-sharp  {
+  background: linear-gradient(90deg, #ffa200 , #6eda78 );
+  
+
+}
+
 $width : 100px;
 
 .item-card {
@@ -86,7 +92,21 @@ $width : 100px;
   border-right:   20px solid  #0ff;
   border-bottom: 100px solid #0ff;
   
+ 
   
+}
+
+.trapezium::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: $width+50px ;
+  height: 0;
+  border-left: 20px solid transparent;
+  border-right:   20px solid  #0ff;
+  border-bottom: 100px solid #0ff;
+  transform:  rotate(180deg);
 }
 
 // .trapezium2 {

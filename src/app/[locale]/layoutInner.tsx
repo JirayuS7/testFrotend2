@@ -3,11 +3,11 @@ import { Breadcrumb, Layout, Menu, Select, theme } from "antd";
 import { useLocale } from "next-intl";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import {  useTransition } from "react";
-
+import { useTransition } from "react";
+import { usePathname } from 'next/navigation'
 const { Header, Content, Footer } = Layout;
 
- 
+
 
 export default function LayoutInner({
     children,
@@ -19,29 +19,39 @@ export default function LayoutInner({
     } = theme.useToken();
 
     const router = useRouter();
-    const localActive =  useLocale();
+    const pathname = usePathname()
+    const pathnameArr = pathname.split("/")[2]
+
+    const localActive = useLocale();
     const [isPending, startTransition] = useTransition();
+
+    const MenuItem = ({ link, text }: { link: string, text: string }) => {
+        return <Link href={link} className={`text-white px-3
+        ${pathnameArr === link.split("/")[2] ? "bg-primary" : ""}
+        `}
+        >{text}</Link>
+    }
 
     const items = [
         {
             key: "1",
-            label: <Link href={`/${localActive}`}>Home</Link>,
+            label: <MenuItem link={`/${localActive}`} text={"Home"} />,
         },
         {
             key: "2",
-            label: <Link href={`/${localActive}/sharp`} >Option1</Link>,
+            label: <MenuItem link={`/${localActive}/sharp`} text={"Option1"} />,
         },
         {
             key: "3",
-            label: <Link href={`/${localActive}/form`}>Option2</Link>,
+            label:  <MenuItem link={`/${localActive}/form`} text={"Option2"} />,
         },
     ];
 
     function handleSelect(e: string) {
- 
-      
+
+
         startTransition(() => {
-            router.replace(`/${e}`);
+            router.replace(`/${e}/${pathnameArr || ""}`);
         });
     }
 
@@ -49,14 +59,21 @@ export default function LayoutInner({
         <Layout>
             <Header style={{ display: "flex", alignItems: "center" }}>
                 <h1 className="text-white h2 me-3">JIRAYU SRIPUD</h1>
-                <Menu
+                {/* <Menu
                     theme="dark"
                     mode="horizontal"
                     defaultSelectedKeys={["2"]}
                     items={items}
                     style={{ flex: 1, minWidth: 0 }}
-                />
-                <div>
+                /> */}
+
+                {items.map((item) => { return item.label }
+
+                )}
+
+
+
+                <div className="ms-auto">
                     <Select
                         defaultValue="En"
                         disabled={isPending}
@@ -73,9 +90,9 @@ export default function LayoutInner({
             </Header>
             <Content style={{ padding: "0 48px" }}>
                 <Breadcrumb style={{ margin: "16px 0" }}>
-                    <Breadcrumb.Item>Home</Breadcrumb.Item>
-                    <Breadcrumb.Item>List</Breadcrumb.Item>
-                    <Breadcrumb.Item>App</Breadcrumb.Item>
+                    <Breadcrumb.Item>
+                        <Link href={`/${localActive}`}>
+                            Home</Link></Breadcrumb.Item>
                 </Breadcrumb>
                 <div
                     style={{

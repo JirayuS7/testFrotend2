@@ -1,5 +1,8 @@
+"use client";
+
 import React from "react";
 import {
+  Alert,
   Button,
   Cascader,
   DatePicker,
@@ -10,8 +13,54 @@ import {
   Select,
   TreeSelect,
 } from "antd";
+import { DataType } from "../form/page";
+import { useTranslations } from "next-intl";
 
-export default function FormAntd() {
+export default function FormAntd({
+  data,
+  setData,
+}: {
+  data: DataType[];
+  setData: (data: DataType[]) => void;
+}) {
+    // const t = useTranslations('Form');
+  const [form] = Form.useForm();
+
+  const onFinish = (values: any) => {
+    const ConvertValue = {
+      key: values.idNumber,
+      name: values.firstName + ` ` + values.lastName,
+      gender: values.gender,
+      phone: values.phone,
+      nationality: values.nationality,
+      action: values.idNumber,
+    };
+    var getKey =   Math.random().toString(16).slice(2)
+    try {
+      setData([...data, { key: getKey, ...ConvertValue }] );
+      form.resetFields();
+
+
+      //  set Local Storage
+      try { 
+        localStorage.setItem("employee", JSON.stringify([...data, { key: getKey, ...ConvertValue }] ));
+      } catch (error) {
+        console.log(error);
+       } 
+
+
+      alert("Employee Added Successfully");
+
+    } catch (error) {
+      console.log(error);
+      alert("Error");
+    }
+
+  
+
+
+  };
+
   const formItemLayout = {
     // labelCol: {
     //   xs: { span: 24 },
@@ -23,8 +72,17 @@ export default function FormAntd() {
     // },
   };
   return (
-    <Form {...formItemLayout} variant="filled" style={{ maxWidth: 700 }}>
-      <h3 className="mb-5">Create New Employee</h3>
+    <Form
+      {...formItemLayout}
+      variant="filled"
+      style={{ maxWidth: 700 }}
+      form={form}
+      onFinish={onFinish}
+    >
+      <h3 className="mb-5"> 
+        {/* {t('title')} */}
+        Add Employee
+      </h3>
 
       <div className="row">
         <div className="col-md-3">
@@ -86,10 +144,7 @@ export default function FormAntd() {
             name="nationality"
             rules={[{ required: true, message: "Please input!" }]}
           >
-            <Select
-              style={{ width: "100%" }}
-              placeholder="Select National Type"
-            />
+            <Input style={{ width: "100%" }} placeholder="Thai" />
           </Form.Item>
         </div>
       </div>
@@ -134,7 +189,7 @@ export default function FormAntd() {
         <div className="col-md-12">
           <Form.Item
             label="Phone Number"
-            name="phoneNumber"
+            name="phone"
             rules={[{ required: true, message: "Please input!" }]}
           >
             <InputNumber style={{ width: "100%" }} />
@@ -154,67 +209,18 @@ export default function FormAntd() {
         </div>
       </div>
 
-      {/* <Form.Item
-        label="TextArea"
-        name="TextArea"
-        rules={[{ required: true, message: "Please input!" }]}
-    >
-        <Input.TextArea />
-    </Form.Item>
-
-    <Form.Item
-        label="Mentions"
-        name="Mentions"
-        rules={[{ required: true, message: "Please input!" }]}
-    >
-        <Mentions />
-    </Form.Item>
-
-    <Form.Item
-        label="Select"
-        name="Select"
-        rules={[{ required: true, message: "Please input!" }]}
-    >
-        <Select />
-    </Form.Item>
-
-    <Form.Item
-        label="Cascader"
-        name="Cascader"
-        rules={[{ required: true, message: "Please input!" }]}
-    >
-        <Cascader />
-    </Form.Item>
-
-    <Form.Item
-        label="TreeSelect"
-        name="TreeSelect"
-        rules={[{ required: true, message: "Please input!" }]}
-    >
-        <TreeSelect />
-    </Form.Item> */}
-      {/* 
-<Form.Item
-label="DatePicker"
-name="DatePicker"
-rules={[{ required: true, message: "Please input!" }]}
->
-<DatePicker />
-</Form.Item> */}
-
-      {/* <Form.Item
-        label="RangePicker"
-        name="RangePicker"
-        rules={[{ required: true, message: "Please input!" }]}
-    >
-        <RangePicker />
-    </Form.Item> */}
-
       <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
         <Button type="primary" htmlType="submit" className="me-2">
           Submit
         </Button>
-        <Button>Reset</Button>
+        <Button
+ className="me-2"
+          onClick={() => {
+            form.resetFields();
+          }}
+        
+        >Reset</Button>
+        
       </Form.Item>
     </Form>
   );
