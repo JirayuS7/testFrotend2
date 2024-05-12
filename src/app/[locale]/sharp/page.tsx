@@ -1,6 +1,6 @@
 "use client";
 import { Breadcrumb, Button, Flex, Layout, Menu, theme } from "antd";
-import LayoutInner from "../[locale]/layoutInner";
+import LayoutInner from "../layoutInner";
 import {
   DownloadOutlined,
   DownOutlined,
@@ -207,12 +207,10 @@ export default function SharpPage() {
   };
 
   return (
-    <Layout>
       <LayoutInner>
         <Control />
         <hr />
         <SharpCard />
       </LayoutInner>
-    </Layout>
   );
 }
