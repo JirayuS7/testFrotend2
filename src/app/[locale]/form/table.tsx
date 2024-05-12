@@ -12,6 +12,8 @@ export default function TableAntD({
     dataTable,
     setDataTable,
     data,
+    Edit,
+    setEdit,
 
 }: {
     data: DataType[];
@@ -19,6 +21,8 @@ export default function TableAntD({
     removeItem: (key: React.Key) => void;
     dataTable: any;
     setDataTable: any;
+    Edit: string;
+    setEdit: (value: string) => void;
 }) {
     const [messageApi, contextHolder] = message.useMessage();
     const success = () => {
@@ -62,7 +66,7 @@ export default function TableAntD({
                     <Button
                         className="me-2"
                         type="primary"
-                        onClick={() => console.log(record)}
+                        onClick={() => setEdit(record.key as string)}
                     >
                         Edit
                     </Button>
@@ -81,7 +85,6 @@ export default function TableAntD({
         },
     ];
 
-    // const Convertdata =   JSON.parse(localStorage.getItem("employee") || "[]")
 
 
 
@@ -106,7 +109,9 @@ export default function TableAntD({
             setDataTable(dataNew);
         }, 1000);
 
-    }, [data]);
+    }, [data,Edit]);
+
+ 
 
     return (
         <div>

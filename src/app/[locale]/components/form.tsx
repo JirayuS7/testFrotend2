@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Alert,
   Button,
@@ -13,53 +13,50 @@ import {
   Select,
   TreeSelect,
 } from "antd";
-import { DataType } from "../form/page";
+import { DataType, FormDataType } from "../form/page";
 import { useTranslations } from "next-intl";
+import dayjs from "dayjs";
 
 export default function FormAntd({
-   
+
   localData,
   dataTable,
   data,
-  setData ,
+  setData,
   setDataTable,
+  Edit,
+  setEdit,
 }: {
-  data : DataType[],
-  setData : React.Dispatch<React.SetStateAction<DataType[]>>
-  localData:  DataType[],
-  dataTable:  DataType[],
-  setDataTable:   (value: any) => void;
+  data: DataType[],
+  setData: React.Dispatch<React.SetStateAction<DataType[]>>
+  localData: DataType[],
+  dataTable: DataType[],
+  setDataTable: (value: any) => void;
+  Edit: string;
+  setEdit: (value: string) => void;
 }) {
-  // const t = useTranslations('Form');
   const [form] = Form.useForm();
-
-
+  const isEdit = Edit !== "" ? true : false;
+  const EiditID = Edit !== "" ? Edit : null;
 
   const onFinish = (values: any) => {
     var getKey = Math.random().toString(16).slice(2)
-    // const ConvertValue = {
-    //   key: getKey,
-    //   name: values.firstName + ` ` + values.lastName,
-    //   gender: values.gender,
-    //   phone: values.phone,
-    //   nationality: values.nationality,
-    //   action: values.idNumber,
-    // };
+
 
     try {
-      // setData([...data, { key: getKey, ...ConvertValue }] );
 
 
-      console.log(values)
 
       try {
         localStorage.setItem("employee", JSON.stringify([...localData, { key: getKey, ...values }]));
-        setDataTable([...dataTable, { key: getKey, name : 
-          values.firstName + ` ` + values.lastName
-          , ...values }]);
+        setDataTable([...dataTable, {
+          key: getKey, name:
+            values.firstName + ` ` + values.lastName
+          , ...values
+        }]);
 
-        
-       
+
+
         form.resetFields();
       } catch (error) {
         console.log(error);
@@ -78,6 +75,34 @@ export default function FormAntd({
 
   };
 
+
+
+  function EditData() {
+
+    const data: any[] = localData.filter((item) => item.key === EiditID);
+    const newData = localData.filter((item) => item.key !== EiditID);
+
+    try {
+      localStorage.setItem("employee", JSON.stringify([...newData, { key: EiditID, ...form.getFieldsValue() }]));
+
+
+      setDataTable([...dataTable, {
+        key: EiditID, name:
+          form.getFieldsValue().firstName + ` ` + form.getFieldsValue().lastName
+        , ...form.getFieldsValue()
+      }]);
+
+      form.resetFields();
+
+    } catch (error) {
+      console.log(error);
+    }
+
+    setEdit("");
+    alert("Employee Updated Successfully");
+  }
+
+
   const formItemLayout = {
     // labelCol: {
     //   xs: { span: 24 },
@@ -88,6 +113,39 @@ export default function FormAntd({
     //   sm: { span: 14 },
     // },
   };
+
+
+  useEffect(() => {
+
+
+    if (isEdit && localData) {
+      const data: any[] = localData.filter((item) => item.key === EiditID);
+
+      const ConvertDate = data && data[0].birthDate
+      const NewDate = dayjs(ConvertDate).format('DD-MM-YYYY')
+
+
+
+      form.setFieldsValue({
+
+        key: EiditID,
+        gender: data && data[0].gender,
+        firstName: data && data[0].firstName,
+        lastName: data && data[0].lastName,
+        birthDate: dayjs(ConvertDate),
+        nationality: data && data[0].nationality,
+        idNumber: data && data[0].idNumber,
+        passport: data && data[0].passport,
+        phone: data && data[0].phone,
+        ExpectedSalary: data && data[0].ExpectedSalary
+
+      });
+    }
+
+
+  }, [Edit]);
+
+
   return (
     <Form
       {...formItemLayout}
@@ -96,9 +154,16 @@ export default function FormAntd({
       form={form}
       onFinish={onFinish}
     >
+      {isEdit && <div>
+        <Button onClick={() => setEdit("")} className="mb-3">
+          {`< Back`} </Button>
+      </div>}
+
+
       <h3 className="mb-5">
         {/* {t('title')} */}
-        Add Employee
+        {isEdit ? (
+          <>Edit : ({EiditID} )    </>) : "Add Employee"}
       </h3>
 
       <div className="row">
@@ -227,9 +292,26 @@ export default function FormAntd({
       </div>
 
       <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
-        <Button type="primary" htmlType="submit" className="me-2">
-          Submit
-        </Button>
+
+
+        {isEdit ? (
+          <Button
+            type="primary"
+            htmlType="submit"
+            className="me-2"
+            onClick={EditData}
+          >
+            Update
+          </Button>
+        ) : (
+          <Button type="primary" htmlType="submit" className="me-2">
+            Submit
+          </Button>
+        )}
+
+
+
+
         <Button
           className="me-2"
           onClick={() => {

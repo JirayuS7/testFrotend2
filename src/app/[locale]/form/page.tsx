@@ -12,9 +12,26 @@ export interface DataType {
   nationality: string;
   action: any;
 }
+
+export interface FormDataType {
+  key: string | number;
+  gender: string;
+  firstName: string;
+  lastName: string 
+  birthDate: string,
+  nationality: number,
+  idNumber: number,
+  passport: number,
+  phone: number,
+  ExpectedSalary: number
+
+}
+
+
 export default function FormPage() {
   const [data, setData] = useState<DataType[]>([]);
   const [dataTable, setDataTable] = useState([]);
+  const [Edit, setEdit] = useState<string | number>("");
 
   const localeData = () => {
     const datas = localStorage.getItem("employee");
@@ -57,13 +74,15 @@ export default function FormPage() {
     <LayoutInner>
       <div className="row">
         <div className="col-md-6">
-          {" "}
+           
           <FormAntd
             localData={localeDataTable}
             dataTable={dataTable}
             setDataTable={setDataTable}
             data={data}
             setData={setData}
+            Edit = {Edit as string}
+            setEdit = {setEdit}
           />
         </div>
 
@@ -76,6 +95,8 @@ export default function FormPage() {
             dataTable={dataTable}
             setDataTable={setDataTable}
             data={data}
+            Edit = {Edit as string}
+            setEdit = {setEdit}
            
           />
         </div>
