@@ -118,21 +118,7 @@ export default function TableAntD({
         <div>
             <div>
                 <Table columns={columns} dataSource={Data} />
-                <div className="text-center">
-                    <Button
-                        className="me-2"
-                        onClick={() => {
-                            try {
-                                localStorage.removeItem("employee");
-                            } catch (error) {
-                                console.log(error);
-                            }
-                            // router.push('/form')
-                        }}
-                    >
-                        Reset Local Storage
-                    </Button>
-                </div>
+                
             </div>
         </div>
     );
