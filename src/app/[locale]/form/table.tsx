@@ -1,5 +1,5 @@
 "use client";
-import React, { useMemo, useState } from "react";
+import React, { use, useMemo, useState } from "react";
 import { Button, Table, message } from "antd";
 import type { TableColumnsType } from "antd";
 import { DataType } from "./page";
@@ -7,38 +7,23 @@ import { useRouter } from "next/navigation";
 import { t } from "i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/lib/store";
-import { addPost } from '@/lib/features/formEditIdSlice';
-
+import { addPost } from "@/lib/features/formEditIdSlice";
+import { addItem } from "@/lib/features/dataTableSlice";
 
 export default function TableAntD({
+
     dataLocal,
     removeItem,
-    dataTable,
-    setDataTable,
-    data,
-   
-
 }: {
-    data: DataType[];
     dataLocal: DataType[];
     removeItem: (key: React.Key) => void;
-    dataTable: any;
-    setDataTable: any;
-    
 }) {
-    const Edit  = useSelector((state: RootState) => state.form?.id);
-    const setEdit = useSelector((state: RootState) => state.form?.id);
+    // const Edit = useSelector((state: RootState) => state.form?.id);
     const dispatch = useDispatch();
+    const dataTableCenter = useSelector((state: RootState) => state.dataTable);
 
-    
-    const [messageApi, contextHolder] = message.useMessage();
-    const success = () => {
-        messageApi.open({
-            type: "success",
-            content: `  Removed   success fully `,
-        });
-    };
 
+    // const [messageApi, contextHolder] = message.useMessage();
 
     const columns: TableColumnsType<DataType> = [
         {
@@ -58,7 +43,6 @@ export default function TableAntD({
             title: "Phone Number",
             dataIndex: "phone",
             key: "phone",
-            
         },
         {
             title: "Nationality",
@@ -74,11 +58,10 @@ export default function TableAntD({
                     <Button
                         className="me-2"
                         type="primary"
-                        onClick={() =>   dispatch(addPost(record.key))
-                            
-                            
+                        onClick={
+                            () => dispatch(addPost(record.key))
+
                             // setEdit(record.key as string)
-                        
                         }
                     >
                         Edit
@@ -88,7 +71,9 @@ export default function TableAntD({
                         danger
                         onClick={() => (
                             removeItem(record.key),
-                            alert(`Removed  ID : ${record.key} Successfully`)
+                            alert(`Removed  ID : ${record.key} Successfully`),
+                            dispatch(addPost(''))
+
                         )}
                     >
                         Delete
@@ -99,37 +84,41 @@ export default function TableAntD({
     ];
 
 
+    function convertData(dataLocal: any) {
+        const convertDataLocal = dataLocal && dataLocal.map((item: any) => {
 
 
+            return {
+                key: item.key,
+                name: item.firstName + ` ` + item.lastName,
+                gender: item.gender,
+                phone: item.phone,
+                nationality: item.nationality,
+                action: item.key
+            }
 
+        })
+
+        return convertDataLocal;
+    }
+    ;
+
+
+    const Data = convertData(dataLocal);
+    console.log("🚀 ~ dataLocal:", dataLocal)
+    console.log("🚀 ~ Data:", Data)
 
 
     useMemo(() => {
 
-        setTimeout(() => {
-            const dataNew = dataLocal &&
-                dataLocal.map((item: any) => {
-                    return {
-                        key: item.key,
-                        name: item.firstName + ` ` + item.lastName,
-                        gender: item.gender,
-                        phone: item.phone,
-                        nationality: item.nationality,
-                        action: item.key,
-                    };
-                });
+        convertData(dataLocal);
 
-            setDataTable(dataNew);
-        }, 1000);
-
-    }, [data,Edit]);
-
- 
+    }, [dataTableCenter,dataLocal]);
 
     return (
         <div>
             <div>
-                <Table columns={columns} dataSource={dataTable} />
+                <Table columns={columns} dataSource={Data} />
                 <div className="text-center">
                     <Button
                         className="me-2"

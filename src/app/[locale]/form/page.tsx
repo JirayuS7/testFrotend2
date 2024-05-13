@@ -2,15 +2,10 @@
 import FormAntd from "@/app/[locale]/components/form";
 import LayoutInner from "../layoutInner";
 import TableAntD from "./table";
-import { useEffect, useState } from "react";
-import { message } from "antd";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
-import type { RootState } from '@/lib/store';
- import { addPostTable  } from  '@/lib/features/dataTableSlice'
-// import { useSelector, useDispatch } from 'react-redux'
-// import { decrement, increment }  from '../../../lib/features/counter/counterSlice'
-
+import type { RootState } from "@/lib/store";
+import { addItem } from "@/lib/features/dataTableSlice";
 
 export interface DataType {
   key: string | number;
@@ -25,35 +20,25 @@ export interface FormDataType {
   key: string | number;
   gender: string;
   firstName: string;
-  lastName: string 
-  birthDate: string,
-  nationality: number,
-  idNumber: number,
-  passport: number,
-  phone: number,
-  ExpectedSalary: number
-
+  lastName: string;
+  birthDate: string;
+  nationality: number;
+  idNumber: number;
+  passport: number;
+  phone: number;
+  ExpectedSalary: number;
 }
 
-
 export default function FormPage() {
-  const [data, setData] = useState<DataType[]>([]);
-  const [dataTable, setDataTable] = useState([]);
- 
-
-
-  // reduce
- 
-  const count = useSelector((state: RootState) => state.counter.value);
-  const dataTableCenter  = useSelector((state: RootState) => state.dataTable);
-  console.log("🚀 ~ FormPage ~ dataTableCenter:", dataTableCenter)
   const dispatch = useDispatch();
- 
- 
-
+  const dataTableCenter = useSelector((state: RootState) => state.dataTable);
 
   const localeData = () => {
-    const datas = localStorage.getItem("employee");
+    let datas: string = "";
+
+    if (typeof localStorage !== "undefined") {
+      datas = localStorage.getItem("employee") as string;
+    }
 
     if (datas) {
       try {
@@ -66,24 +51,24 @@ export default function FormPage() {
   };
 
   const localeDataTable = localeData();
- 
 
   useEffect(() => {
-    try {
-      if (localeDataTable) {
-        setData(localeDataTable);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }, []);
+    localeData();
+  }, [dataTableCenter]);
 
   function removeItem(key: React.Key) {
-    const newData = data.filter((item) => item.key !== key);
+    const newData =
+      localeDataTable &&
+      localeDataTable.filter((item: DataType) => item.key !== key);
 
     try {
-      localStorage.setItem("employee", JSON.stringify(newData));
-      setData(newData);
+      dispatch(addItem(newData));
+
+      if (typeof localStorage !== "undefined") {
+        localStorage.setItem("employee", JSON.stringify(newData));
+      } else {
+        alert("Error Removing Employee");
+      }
     } catch (error) {
       alert("Error Removing Employee");
     }
@@ -93,40 +78,17 @@ export default function FormPage() {
     <LayoutInner>
       <div className="row">
         <div className="col-md-6">
-           
-          <FormAntd
-            localData={localeDataTable}
-            dataTable={dataTable}
-            setDataTable={setDataTable}
-            data={data}
-            setData={setData}
-           
-          />
+          <FormAntd localData={localeDataTable} />
         </div>
 
         <div className="col-md-6">
-          <strong>All Employees ({dataTable.length})</strong>
+          <strong>
+            All Employees (
+            {localeDataTable?.length ? localeDataTable?.length : 0})
+          </strong>
 
-          <TableAntD
-            dataLocal={localeDataTable}
-            removeItem={removeItem}
-            dataTable={dataTable}
-            setDataTable={setDataTable}
-            data={data}
-         
-           
-          />
+          <TableAntD dataLocal={localeDataTable} removeItem={removeItem} />
         </div>
-      </div>
-
-      <div>
-        <button className="btn" onClick={() => dispatch(addPostTable(
-          {
-            key: 1,
-            name: 'John Doe',}
-
-        ))}>+</button>
-        {/* <button  className="btn"  onClick={() => dispatch(decrement())}>-</button> */}
       </div>
     </LayoutInner>
   );

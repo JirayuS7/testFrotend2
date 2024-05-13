@@ -18,64 +18,65 @@ import { useTranslations } from "next-intl";
 import dayjs from "dayjs";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/lib/store";
-import { addPost } from '@/lib/features/formEditIdSlice';
+import { addPost } from "@/lib/features/formEditIdSlice";
+import { addItem } from "@/lib/features/dataTableSlice";
 
-export default function FormAntd({
-  localData,
-  dataTable,
-  data,
-  setData,
-  setDataTable,
-   
-}: {
-  data: DataType[];
-  setData: React.Dispatch<React.SetStateAction<DataType[]>>;
-  localData: DataType[];
-  dataTable: DataType[];
-  setDataTable: (value: any) => void;
-   
-}) {
-
+export default function FormAntd({ localData }: { localData: DataType[] }) {
   // reduce
-  const Edit  = useSelector((state: RootState) => state.form?.id);
+  const dataTableCenter = useSelector((state: RootState) => state.dataTable);
+
+  const Edit = useSelector((state: RootState) => state.form?.id);
   const dispatch = useDispatch();
 
   const [form] = Form.useForm();
   const isEdit = Edit !== "" ? true : false;
   const EiditID = Edit !== "" ? Edit : null;
-
+  
   const onFinish = (values: any) => {
     var getKey = Math.random().toString(16).slice(2);
 
     try {
-      try {
-        localStorage.setItem(
-          "employee",
-          JSON.stringify([...localData, { key: getKey, ...values }])
-        );
-        setDataTable([
-          ...dataTable,
-          {
-            key: getKey,
-            name: values.firstName + ` ` + values.lastName,
-            ...values,
-          },
-        ]);
 
-        form.resetFields();
+
+      try {
+
+        if (!localData) {
+          localStorage.setItem(
+            "employee",
+            JSON.stringify([{ key: getKey, ...values }])
+          );
+
+        } else {
+          localStorage.setItem(
+            "employee",
+            JSON.stringify([...localData, { key: getKey, ...values }])
+          );
+        }
+
       } catch (error) {
         console.log(error);
       }
 
+      dispatch(
+        addItem({
+          ...dataTableCenter,
+
+          key: getKey,
+          name: values.firstName + ` ` + values.lastName,
+          ...values,
+        })
+      );
+
       alert("Employee Added Successfully");
+      form.resetFields();
     } catch (error) {
       console.log(error);
-      alert("Error");
+      alert("Employee  Failed");
     }
   };
 
   function EditData() {
-    const data: any[] = localData.filter((item) => item.key === EiditID);
+    
     const newData = localData.filter((item) => item.key !== EiditID);
 
     try {
@@ -84,31 +85,31 @@ export default function FormAntd({
         JSON.stringify([...newData, { key: EiditID, ...form.getFieldsValue() }])
       );
 
-      setDataTable([
-        ...dataTable,
-        {
-          key: EiditID,
-          name:
-            form.getFieldsValue().firstName +
-            ` ` +
-            form.getFieldsValue().lastName,
-          ...form.getFieldsValue(),
-        },
-      ]);
+      dispatch(
+        addItem([
+          ...dataTableCenter,
+          {
+            key: EiditID,
+            name:
+              form.getFieldsValue().firstName +
+              ` ` +
+              form.getFieldsValue().lastName,
+            ...form.getFieldsValue(),
+          },
+        ])
+      );
 
       form.resetFields();
     } catch (error) {
       console.log(error);
     }
 
- 
     dispatch(addPost(""));
-    
+
     alert("Employee Updated Successfully");
   }
 
-  const formItemLayout = { 
-  };
+  const formItemLayout = {};
 
   useEffect(() => {
     if (isEdit && localData) {
@@ -116,6 +117,9 @@ export default function FormAntd({
 
       const ConvertDate = data && data[0].birthDate;
       const NewDate = dayjs(ConvertDate).format("DD-MM-YYYY");
+
+
+      if(isEdit) {  
 
       form.setFieldsValue({
         key: EiditID,
@@ -128,9 +132,13 @@ export default function FormAntd({
         passport: data && data[0].passport,
         phone: data && data[0].phone,
         ExpectedSalary: data && data[0].ExpectedSalary,
-      });
+      }); } else {
+        form.resetFields();
+      }
+
+
     }
-  }, [Edit]);
+  }, [Edit,localData]);
 
   return (
     <Form
@@ -142,7 +150,7 @@ export default function FormAntd({
     >
       {isEdit && (
         <div>
-          <Button onClick={() =>   dispatch(addPost(""))} className="mb-3">
+          <Button onClick={() => dispatch(addPost(""))} className="mb-3">
             {`< Back`}{" "}
           </Button>
         </div>
@@ -229,8 +237,6 @@ export default function FormAntd({
           </Form.Item>
         </div>
       </div>
-
-  
 
       <div className="row">
         <div className="col-md-12">

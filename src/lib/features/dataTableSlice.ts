@@ -4,18 +4,30 @@ import type { PayloadAction } from '@reduxjs/toolkit'
 
  
 
-export const initialState  = [ ]
+export const initialState  =    []
+ 
 
 export const dataTable = createSlice({
   name: 'dataTable',
   initialState,
   reducers: {
-    addPostTable: (state, action:PayloadAction<any> ) => { 
-    console.log("🚀 ~ action:", action)
-    console.log("🚀 ~ state:", state)
+    addItem  : (state, action:PayloadAction<any> ) => { 
+
+      console.log("🚀 ~ action:", action?.payload)
+     if(action.payload === undefined) return
+         state.push(action.payload)
+    
  
           // const { key, name , gender , phone , nationality     } = action.payload;
-       state.push(action.payload)
+
+          // state.push({
+        // state =  action.payload?.map((item: FormDataType) => { 
+        //   return {
+        //     key: item.key,
+        //     name: item.firstName + ` ` + item.lastName, 
+            
+        //   } })
+        
       
     },
     deletePost: (state, action: PayloadAction<number>) => { 
@@ -27,6 +39,6 @@ export const dataTable = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { addPostTable } = dataTable.actions
+export const { addItem } = dataTable.actions
 
 export default dataTable.reducer
