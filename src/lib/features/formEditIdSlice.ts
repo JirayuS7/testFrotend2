@@ -14,8 +14,7 @@ export const formEditId = createSlice({
   initialState,
   reducers: {
     addPost: (state, action  ) => { 
-    console.log("🚀 ~ action:", action)
-    console.log("🚀 ~ state:", state)
+  
 
       state.id = action.payload 
     },

@@ -105,8 +105,7 @@ export default function TableAntD({
 
 
     const Data = convertData(dataLocal);
-    console.log("🚀 ~ dataLocal:", dataLocal)
-    console.log("🚀 ~ Data:", Data)
+ 
 
 
     useMemo(() => {
